@@ -34,50 +34,22 @@ MiniECS permite que você:
 
 ---
 
-## ⚡ Performance vs Métodos Tradicionais
+## ⚡ Vantagens de Performance
 
-### Benchmarks Comparativos
+### Benefícios Técnicos da Arquitetura ECS
 
-#### 1. **Criação e Atualização de Entities**
+1. **Zero Reflection em Runtime** - Acesso direto aos componentes via queries compiladas, sem GetComponent
+2. **Cache-Friendly Memory** - Componentes organizados em arrays contíguos para melhor utilização de cache
+3. **Zero Allocations em Queries** - Iteração eficiente sem criar garbage collections
+4. **Código Simples e Direto** - Sem overhead de MonoBehaviour ou Game Objects complexos
+5. **Minimal Footprint** - Framework extremamente leve, apenas o essencial para ECS funcionar
 
-```
-Método                              | 100k Entities | 1M Entities | Memória
-─────────────────────────────────────────────────────────────────────────
-MonoBehaviour Tradicional           | 250ms         | Timeout      | ~2.5GB
-Scriptable Objects                  | 180ms         | Timeout      | ~2.0GB
-GameObject Pooling                  | 160ms         | Timeout      | ~1.8GB
-Unity ECS + DOTS                    | 15ms          | 120ms        | ~256MB
-MiniECS (Simples)                   | 8ms           | 45ms         | ~128MB
-```
+### Comparado com Abordagens Tradicionais
 
-#### 2. **Query de Componentes (100k Entities)**
-
-```
-Método                              | Find All | Filter | Iteração
-──────────────────────────────────────────────────────────────────
-GameObject.Find + GetComponent      | 45ms     | 200ms  | N/A
-LINQ + FindObjectsOfType           | 120ms    | 350ms  | N/A
-Unity ECS Query (Scheduled)         | 2ms      | 3ms    | 5ms
-MiniECS Query (Direct)              | 1ms      | 2ms    | 3ms
-```
-
-#### 3. **Sincronização de Network**
-
-```
-Método                              | Overhead    | Latência | Escalabilidade
-────────────────────────────────────────────────────────────────────────
-RPC + Manual Serialization          | ~40% CPU    | +150ms   | Baixa (1k players)
-NetworkVariable com MonoBehaviour   | ~35% CPU    | +120ms   | Média (10k)
-Netcode + Componentes ECS (MiniECS) | ~8% CPU     | +15ms    | Alta (100k+)
-```
-
-### Por que MiniECS é tão rápido?
-
-1. **Zero Reflection em Runtime** - Queries compiladas, sem GetComponent
-2. **Cache-Friendly Memory** - Componentes armazenados em arrays contíguos (SoA - Struct of Arrays)
-3. **Zero Allocations** - Iteração sem criar garbage
-4. **Job-Ready** - Preparado para burst compilation e multi-threading
-5. **Minimal Overhead** - ~50KB de código, vs ~500MB do DOTS
+- **Vs MonoBehaviour**: Elimina o overhead de GetComponent em loops, mantém dados organizados na memória
+- **Vs Pooling Manual**: Gerenciamento automático de entidades sem necessidade de listas manuais
+- **Vs Unity ECS+DOTS**: Mesma eficiência sem a complexidade e peso do framework completo
+- **Vs Network Manual**: Integração nativa com Netcode for GameObjects sem serialização complexa
 
 ---
 
@@ -422,16 +394,14 @@ if (instance.TryGetComponent<PlayerAuthoring>(out var authoring))
 
 | Característica | MonoBehaviour | Unity ECS+DOTS | MiniECS |
 |---|---|---|---|
-| **Curva de Aprendizado** | Muito fácil | Muito difícil | Fácil |
-| **Setup Time** | 5 min | 2 horas | 15 min |
-| **Performance** | Péssima | Excelente | Excelente |
-| **Memoria** | ~2GB (100k) | ~256MB (100k) | ~128MB (100k) |
-| **Tamanho** | N/A | ~500MB | ~50KB |
-| **Multiplayer** | Complexo | Muito complexo | Simples |
-| **Netcode Support** | Nativo | Zero | Nativo |
-| **Community** | Grande | Pequena | Crescente |
-| **Documentação** | Vasta | Mínima | Completa |
-| **Escalabilidade** | ~1k entities | ~1M entities | ~500k entities |
+| **Curva de Aprendizado** | Fácil | Muito difícil | Fácil |
+| **Setup Inicial** | Simples | Complexo | Simples |
+| **Performance** | Tradicional | Otimizada | Otimizada |
+| **Tamanho do Framework** | N/A | Pesado (~500MB) | Leve e direto |
+| **Multiplayer** | Manual com RPC | Complexo | Integrado com Netcode |
+| **Documentação** | Vasta | Mínima | Prática |
+| **Escalabilidade** | Limitada | Muito alta | Alta |
+| **Curva de Complexidade** | Baixa no início | Exponencial | Previsível |
 
 ---
 

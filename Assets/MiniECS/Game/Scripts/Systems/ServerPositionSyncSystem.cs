@@ -1,5 +1,4 @@
 using MiniECS;
-using Game.Components;
 using UnityEngine;
 
 namespace Game.Systems
